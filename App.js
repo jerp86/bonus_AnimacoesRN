@@ -12,9 +12,20 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    Animated.timing(this.state.ballY, {
+    const { ballY } = this.state;
+
+    Animated.timing(ballY, {
       toValue: 500,
       duration: 1000,
+    });
+
+    Animated.spring(ballY, {
+      toValue: 300,
+      bounciness: 40,
+    });
+
+    Animated.decay(ballY, {
+      velocity: 10,
     }).start();
   }
 

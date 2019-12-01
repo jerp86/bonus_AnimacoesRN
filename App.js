@@ -6,13 +6,17 @@ import { View, Animated, StyleSheet } from 'react-native';
 // Animated.Image
 // Animated.ScdrollView
 
+const ballY = new Animated.Value(0);
+//const ballX = Animated.divide(ballY, 2);
+const ballX = Animated.multiply(ballY, 2);
 export default class App extends Component {
   state = {
-    ballY: new Animated.Value(0),
+    ballY: ballY,
+    ballX: ballX,
   };
 
   componentDidMount() {
-    const { ballY } = this.state;
+    const { ballY, ballX } = this.state;
 
     Animated.timing(ballY, {
       toValue: 500,
@@ -25,14 +29,16 @@ export default class App extends Component {
     });
 
     Animated.decay(ballY, {
-      velocity: 10,
+      velocity: 0.3,
     }).start();
   }
 
   render() {
+    const { ballY, ballX } = this.state;
+
     return (
       <View style={styles.container}>
-        <Animated.View style={[styles.ball, { top: this.state.ballY }]} />
+        <Animated.View style={[styles.ball, { top: ballY, left: ballX }]} />
       </View>
     );
   }

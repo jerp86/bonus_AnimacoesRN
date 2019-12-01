@@ -6,31 +6,79 @@ import { View, Animated, StyleSheet } from 'react-native';
 // Animated.Image
 // Animated.ScdrollView
 
-const ballY = new Animated.Value(0);
+/* const ballY = new Animated.Value(0);
 //const ballX = Animated.divide(ballY, 2);
-const ballX = Animated.multiply(ballY, 2);
+const ballX = Animated.multiply(ballY, 2); */
+
 export default class App extends Component {
   state = {
-    ballY: ballY,
-    ballX: ballX,
+    ballX: new Animated.Value(0),
+    ballY: new Animated.Value(0),
   };
 
   componentDidMount() {
-    const { ballY, ballX } = this.state;
+    const { ballX, ballY } = this.state;
 
-    Animated.timing(ballY, {
-      toValue: 500,
-      duration: 1000,
-    });
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(ballY, {
+          toValue: 200,
+          duration: 500,
+        }),
 
-    Animated.spring(ballY, {
-      toValue: 300,
-      bounciness: 40,
-    });
+        Animated.delay(200),
 
-    Animated.decay(ballY, {
-      velocity: 0.3,
-    }).start();
+        Animated.timing(ballX, {
+          toValue: 200,
+          duration: 500,
+        }),
+
+        Animated.delay(200),
+
+        Animated.timing(ballY, {
+          toValue: 0,
+          duration: 500,
+        }),
+
+        Animated.delay(200),
+
+        Animated.timing(ballX, {
+          toValue: 0,
+          duration: 500,
+        }),
+
+        Animated.delay(200),
+      ]),
+      {
+        iterations: 2,
+      }
+    ).start();
+
+    Animated.parallel([
+      Animated.timing(ballY, {
+        toValue: 200,
+        duration: 500,
+      }),
+
+      Animated.delay(500),
+
+      Animated.timing(ballX, {
+        toValue: 200,
+        duration: 500,
+      }),
+    ]);
+
+    Animated.stagger(50, [
+      Animated.timing(ballY, {
+        toValue: 200,
+        duration: 500,
+      }),
+
+      Animated.timing(ballX, {
+        toValue: 200,
+        duration: 500,
+      }),
+    ]);
   }
 
   render() {

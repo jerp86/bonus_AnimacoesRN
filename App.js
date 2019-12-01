@@ -1,44 +1,57 @@
 import React, { Component } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
-
-// Animated.View
-// Animated.Text
-// Animated.Image
-// Animated.ScdrollView
-
-/* const ballY = new Animated.Value(0);
-//const ballX = Animated.divide(ballY, 2);
-const ballX = Animated.multiply(ballY, 2); */
+import { View, Animated, StyleSheet, PanResponder } from 'react-native';
 
 export default class App extends Component {
   state = {
-    ballY: new Animated.Value(0),
+    ball: new Animated.ValueXY({ x: 0, y: 0 }),
   };
 
-  componentDidMount() {
-    const { ballY } = this.state;
+  componentWillMount() {
+    const { ball } = this.state;
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetPanResponder: (event, gestureState) => true,
 
-    Animated.timing(ballY, {
-      toValue: 500,
-      duration: 1000,
-    }).start();
+      onPanResponderGrant: (event, gestureState) => {
+        ball.setOffset({
+          x: ball.x._value,
+          y: ball.y._value,
+        });
+
+        ball.setValue({ x: 0, y: 0 });
+      },
+
+      onPanResponderMove: Animated.event(
+        [
+          null,
+          {
+            dx: ball.x,
+            dy: ball.y,
+          },
+        ],
+        {
+          listener: (event, gestureState) => {
+            console.log(gestureState);
+          },
+        }
+      ),
+
+      onPanResponderRelease: () => {
+        ball.flattenOffset();
+      },
+    });
   }
 
   render() {
-    const { ballY } = this.state;
+    const { ball } = this.state;
 
     return (
       <View style={styles.container}>
         <Animated.View
+          {...this._panResponder.panHandlers}
           style={[
             styles.ball,
             {
-              top: ballY,
-              opacity: ballY.interpolate({
-                inputRange: [0, 300],
-                outputRange: [1, 0.2],
-                extrapolate: 'clamp',
-              }),
+              transform: [{ translateX: ball.x }, { translateY: ball.y }],
             },
           ]}
         />
